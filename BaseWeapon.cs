@@ -24,11 +24,13 @@ namespace WeaponSystem
 		[SerializeField] private List<BaseWeaponValidationLogic> _useValidateLogic = new List<BaseWeaponValidationLogic>();
 		[SerializeField] private List<BaseWeaponLogic> _useLogicList = new List<BaseWeaponLogic>();
 		
+		public UnityEvent Used = new UnityEvent();
 		public virtual void Use()
 		{
 			if(ValidateLogic(_useValidateLogic))
 			{
 				PerformLogic(_useLogicList);
+				Used.Invoke();
 			}
 		}
 
@@ -45,8 +47,12 @@ namespace WeaponSystem
 		public static bool ValidateLogic(List<BaseWeaponValidationLogic> validateLogic)
 		{
 			foreach (var item in validateLogic)
+			{
 				if(!item.Validate())
+				{
 					return false;
+				}
+			}
 
 			return  true; 
 		}
