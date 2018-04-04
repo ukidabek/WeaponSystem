@@ -23,8 +23,16 @@ namespace WeaponSystem
 
 		[SerializeField] private List<BaseWeaponValidationLogic> _useValidateLogic = new List<BaseWeaponValidationLogic>();
 		[SerializeField] private List<BaseWeaponLogic> _useLogicList = new List<BaseWeaponLogic>();
+
+		public IWeaponStatistics [] Statistics { get; protected set; }
 		
 		public UnityEvent Used = new UnityEvent();
+
+		protected virtual void Awake()
+		{
+			Statistics = GetAllStatistics();
+		}
+
 		public virtual void Use()
 		{
 			if(ValidateLogic(_useValidateLogic))
@@ -47,14 +55,19 @@ namespace WeaponSystem
 		public static bool ValidateLogic(List<BaseWeaponValidationLogic> validateLogic)
 		{
 			foreach (var item in validateLogic)
-			{
 				if(!item.Validate())
-				{
 					return false;
-				}
-			}
 
 			return  true; 
+		}
+
+		public IWeaponStatistics [] GetAllStatistics()
+		{
+			List<IWeaponStatistics> statistics = new List<IWeaponStatistics>();
+			// statistics.AddRange(GetComponents<IWeaponStatistics>());
+			statistics.AddRange(GetComponentsInChildren<IWeaponStatistics>());
+
+			return statistics.ToArray();
 		}
     }
 }
