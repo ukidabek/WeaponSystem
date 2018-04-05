@@ -64,10 +64,11 @@ namespace WeaponSystem
 		public IWeaponStatistics [] GetAllStatistics()
 		{
 			List<IWeaponStatistics> statistics = new List<IWeaponStatistics>();
-			// statistics.AddRange(GetComponents<IWeaponStatistics>());
 			statistics.AddRange(GetComponentsInChildren<IWeaponStatistics>());
 
 			return statistics.ToArray();
 		}
+
+		public virtual void Initialize() {}
     }
 }
