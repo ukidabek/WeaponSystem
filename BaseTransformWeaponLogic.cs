@@ -6,13 +6,13 @@ namespace WeaponSystem
 {
 	public abstract class BaseTransformWeaponLogic : BaseWeaponLogic 
 	{
-		[SerializeField] protected Transform transform = null;
+		[SerializeField] protected Transform _weaponLogicTransform = null;
 
 		public void SetTransform(Object transform)
 		{
 			if(transform is Transform)
 			{
-				this.transform = transform as Transform;
+				this._weaponLogicTransform = transform as Transform;
 			}
 		}	
 	}
