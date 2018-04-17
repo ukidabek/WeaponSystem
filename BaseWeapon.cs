@@ -21,8 +21,8 @@ namespace WeaponSystem
 			} 
 		}
 
-		[SerializeField] private List<BaseWeaponValidationLogic> _useValidateLogic = new List<BaseWeaponValidationLogic>();
-		[SerializeField] private List<BaseWeaponLogic> _useLogicList = new List<BaseWeaponLogic>();
+		[SerializeField] protected List<BaseWeaponValidationLogic> _useValidateLogic = new List<BaseWeaponValidationLogic>();
+		[SerializeField] protected List<BaseWeaponLogic> _useLogicList = new List<BaseWeaponLogic>();
 
 		public IWeaponStatistics [] Statistics { get; protected set; }
 		
