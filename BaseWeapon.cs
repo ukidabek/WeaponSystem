@@ -26,9 +26,19 @@ namespace WeaponSystem
 
 		public IWeaponStatistics [] Statistics { get; protected set; }
 		
-		public UnityEvent Used = new UnityEvent();
+		private UnityEvent Used = new UnityEvent();
 
-		protected virtual void Awake()
+        public void AddUsedListener(UnityAction call)
+        {
+            Used.AddListener(call);
+        }
+
+        public void RemoveUsedListener(UnityAction call)
+        {
+            Used.RemoveListener(call);
+        }
+
+        protected virtual void Awake()
 		{
 			Statistics = GetAllStatistics();
 		}
@@ -70,5 +80,6 @@ namespace WeaponSystem
 		}
 
 		public virtual void Initialize() {}
+
     }
 }
