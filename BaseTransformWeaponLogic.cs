@@ -8,12 +8,21 @@ namespace WeaponSystem
 	{
 		[SerializeField] protected Transform _weaponLogicTransform = null;
 
-		public void SetTransform(Object transform)
+        private void Awake()
+        {
+            enabled = _weaponLogicTransform != null;
+        }
+
+        public void SetTransform(Object transform)
 		{
 			if(transform is Transform)
 			{
 				this._weaponLogicTransform = transform as Transform;
-			}
+                enabled = true;
+                return;
+            }
+
+            enabled = false;
 		}	
 	}
 }
