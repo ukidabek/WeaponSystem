@@ -4,7 +4,7 @@ namespace WeaponSystem
 {
     public interface IReloadable
     {
-        void Reload(params object[] parameters);
+        bool Reload(params object[] parameters);
         void AddReloadStartListener(UnityAction call);
         void AddReloadEndListener(UnityAction call);
         void RemoveReloadStartListener(UnityAction call);

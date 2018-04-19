@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.Events;
+using UnityEditor.Animations;
 
 using System.Collections;
 using System.Collections.Generic;
@@ -21,12 +22,15 @@ namespace WeaponSystem
 			} 
 		}
 
-		[SerializeField] protected List<BaseWeaponValidationLogic> _useValidateLogic = new List<BaseWeaponValidationLogic>();
+        [SerializeField] private AnimatorOverrideController _characterAnimatorController = null;
+        public AnimatorOverrideController CharacterAnimatorController { get { return _characterAnimatorController; } }
+
+        [SerializeField, Space] protected List<BaseWeaponValidationLogic> _useValidateLogic = new List<BaseWeaponValidationLogic>();
 		[SerializeField] protected List<BaseWeaponLogic> _useLogicList = new List<BaseWeaponLogic>();
 
-		public IWeaponStatistics [] Statistics { get; protected set; }
-		
-		private UnityEvent Used = new UnityEvent();
+        public IWeaponStatistics [] Statistics { get; protected set; }
+
+        private UnityEvent Used = new UnityEvent();
 
         public void AddUsedListener(UnityAction call)
         {
@@ -43,13 +47,16 @@ namespace WeaponSystem
 			Statistics = GetAllStatistics();
 		}
 
-		public virtual void Use()
+		public virtual bool Use()
 		{
 			if(ValidateLogic(_useValidateLogic))
 			{
 				PerformLogic(_useLogicList);
 				Used.Invoke();
+                return true;
 			}
+
+            return false;
 		}
 
         public static void PerformLogic(List<BaseWeaponLogic> logicList)
