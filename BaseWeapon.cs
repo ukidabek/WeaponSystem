@@ -1,10 +1,9 @@
 ﻿using UnityEngine;
 using UnityEngine.Events;
-using UnityEditor.Animations;
 
+using System;
 using System.Collections;
 using System.Collections.Generic;
-using System;
 
 namespace WeaponSystem
 {

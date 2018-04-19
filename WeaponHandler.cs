@@ -22,12 +22,7 @@ namespace WeaponSystem
         [SerializeField] private Transform _hitOrigin = null;
 
 
-        [Header("Actions")]
-        //[SerializeField] private ActionList _useRangeActions = new ActionList();
-        //[SerializeField] private ActionList _useMeleeActions = new ActionList();
-        //[SerializeField] private ActionList _reloadActions = new ActionList();
-        //[SerializeField] private ActionList _aimActions = new ActionList();
-
+        [Header("Unity events")]
         public UnityEvent OnUseMeleeWeapon = new UnityEvent();
         public UnityEvent OnUseRangedWeapon = new UnityEvent();
         public UnityEvent OnReloadWeapon = new UnityEvent();
@@ -36,6 +31,8 @@ namespace WeaponSystem
         [Header("Weapons slots")]
         [SerializeField]
         private int _weaponSlotsCount = 3;
+        public int WeaponSlotsCount { get { return _weaponSlotsCount; } }
+
         [SerializeField] private int _currentWeaponIndex = 0;
 
         [SerializeField, Space] private List<BaseWeapon> _weaponSlots = new List<BaseWeapon>();
@@ -68,14 +65,22 @@ namespace WeaponSystem
                 _weaponSlots.Add(weapon);
 
                 weapon.Initialize();
-                weapon.gameObject.SetActive(i == _currentWeaponIndex ? true : false);
+                weapon.gameObject.SetActive(false);
 
                 if (i == _currentWeaponIndex) SwitchToWeapon(weapon);
             }
         }
 
+        public void SwitchToWeapon(int index)
+        {
+            _weaponSlots[_currentWeaponIndex].gameObject.SetActive(false);
+            _currentWeaponIndex = index;
+            SwitchToWeapon(_weaponSlots[index]);
+        }
+
         private void SwitchToWeapon(BaseWeapon baseWeapon)
         {
+            baseWeapon.gameObject.SetActive(true);
             _characterAnimatior.runtimeAnimatorController = baseWeapon.CharacterAnimatorController;
 
             HandleRangeWeapon(baseWeapon);
@@ -120,7 +125,7 @@ namespace WeaponSystem
 
         public void OnValidate()
         {
-            if (_defaultWeaponPrefabList.Count > _weaponSlotsCount)
+            if (_defaultWeaponPrefabList.Count > WeaponSlotsCount)
                 _defaultWeaponPrefabList.RemoveAt(_defaultWeaponPrefabList.Count - 1);
         }
 
