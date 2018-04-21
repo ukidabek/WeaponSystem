@@ -13,14 +13,12 @@ namespace WeaponSystem
         [Header("Animations")]
         [SerializeField]
         private Animator _characterAnimatior = null;
-        [SerializeField] private AnimationEventsBroadcaster _weaponHolderBroadcaster = null;
 
         [Header("Weapon associated transforms")]
         [SerializeField]
         private Transform _weaponHolder = null;
         [SerializeField] private Transform _shootOrigin = null;
         [SerializeField] private Transform _hitOrigin = null;
-
 
         [Header("Unity events")]
         public UnityEvent OnUseMeleeWeapon = new UnityEvent();
