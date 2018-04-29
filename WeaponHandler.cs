@@ -40,7 +40,7 @@ namespace WeaponSystem
         public BaseWeapon CurrentWeapon { get { return _weaponSlots[_currentWeaponIndex]; } }
 
 
-        [SerializeField] private bool _isAming = false;
+        private bool _isAming = false;
 
         private bool _isRangedWeapon = false;
         private IRange _rangeWeapon = null;
