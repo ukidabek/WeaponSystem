@@ -11,12 +11,10 @@ namespace WeaponSystem
     public class WeaponHandler
     {
         [Header("Animations")]
-        [SerializeField]
-        private Animator _characterAnimatior = null;
+        [SerializeField] private Animator _characterAnimatior = null;
 
         [Header("Weapon associated transforms")]
-        [SerializeField]
-        private Transform _weaponHolder = null;
+        [SerializeField] private Transform _weaponHolder = null;
         [SerializeField] private Transform _shootOrigin = null;
         [SerializeField] private Transform _hitOrigin = null;
 
@@ -34,6 +32,7 @@ namespace WeaponSystem
         [SerializeField] private int _currentWeaponIndex = 0;
 
         [SerializeField, Space] private List<BaseWeapon> _weaponSlots = new List<BaseWeapon>();
+        public List<BaseWeapon> WeaponSlots { get { return _weaponSlots; } }
 
         [SerializeField, Space] private List<GameObject> _defaultWeaponPrefabList = new List<GameObject>();
 
@@ -64,9 +63,12 @@ namespace WeaponSystem
 
                 weapon.Initialize();
                 weapon.gameObject.SetActive(false);
-
-                if (i == _currentWeaponIndex) SwitchToWeapon(weapon);
             }
+        }
+
+        public void SwichToDefaultWeapon()
+        {
+            SwitchToWeapon(_currentWeaponIndex);
         }
 
         public void SwitchToWeapon(int index)
@@ -79,7 +81,9 @@ namespace WeaponSystem
         private void SwitchToWeapon(BaseWeapon baseWeapon)
         {
             baseWeapon.gameObject.SetActive(true);
-            _characterAnimatior.runtimeAnimatorController = baseWeapon.CharacterAnimatorController;
+            var controllerProvider = baseWeapon.GetComponent<IAnimationControllerProvider>();
+            if(controllerProvider != null)
+                _characterAnimatior.runtimeAnimatorController = controllerProvider.Controller;
 
             HandleRangeWeapon(baseWeapon);
             HandleMeleeWeapon(baseWeapon);
