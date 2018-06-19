@@ -20,31 +20,26 @@ namespace WeaponSystem
         [SerializeField] private Transform _shootOrigin = null;
         [SerializeField] private Transform _hitOrigin = null;
 
+        [Space,Header("Weapons slots")]
+        [SerializeField] private int _currentWeaponIndex = 0;
+        [SerializeField] private List<GameObject> _defaultWeaponPrefabList = new List<GameObject>();
+        [SerializeField] private List<IWeapon> _weaponSlots = new List<IWeapon>();
+        public List<IWeapon> WeaponSlots { get { return _weaponSlots; } }
+
+
+        [Space, Header("Weapon handling data")]
+        [SerializeField] private Object[] _initializeData = null;
+        [SerializeField] private Object[] _useData = null;
+
         [Header("Unity events")]
         public UnityEvent OnUseMeleeWeapon = new UnityEvent();
         public UnityEvent OnUseRangedWeapon = new UnityEvent();
         public UnityEvent OnReloadWeapon = new UnityEvent();
         public OnWeaponAim OnAimWeapon = new OnWeaponAim();
 
-        [Header("Weapons slots")]
-        [SerializeField] private int _weaponSlotsCount = 3;
-        public int WeaponSlotsCount { get { return _weaponSlotsCount; } }
-
-        [SerializeField] private int _currentWeaponIndex = 0;
-
-        [Space]
-        [SerializeField] private List<IWeapon> _weaponSlots = new List<IWeapon>();
-        public List<IWeapon> WeaponSlots { get { return _weaponSlots; } }
-        public IWeapon CurrentWeapon { get { return _weaponSlots[_currentWeaponIndex]; } }
-
-        [SerializeField, Space] private List<GameObject> _defaultWeaponPrefabList = new List<GameObject>();
-
-        [Space]
-        [SerializeField] private Object[] _initializeData = null;
-        [SerializeField] private Object[] _useData = null;
-
         private bool _isAming = false;
 
+        private IWeapon _currentWeapon { get { return _weaponSlots[_currentWeaponIndex]; } }
         private IRange _rangeWeapon = null;
         private IMelee _meleeWeapon = null;
         private IReloadable _reloadableWeapon = null;
@@ -70,22 +65,26 @@ namespace WeaponSystem
 
         public void SwitchToWeapon(int index)
         {
-            _weaponSlots[_currentWeaponIndex].GameObject.SetActive(false);
-            _currentWeaponIndex = index;
-            SwitchToWeapon(_weaponSlots[index]);
+           _currentWeapon.GameObject.SetActive(false);
+            SwitchToWeapon(_weaponSlots[_currentWeaponIndex = index]);
         }
 
         private void SwitchToWeapon(IWeapon baseWeapon)
         {
             baseWeapon.GameObject.SetActive(true);
-            var controllerProvider = baseWeapon.GameObject.GetComponent<IAnimationControllerProvider>();
-            if(controllerProvider != null)
-                _characterAnimatior.runtimeAnimatorController = controllerProvider.Controller;
 
+            HandleAnimationControllerProvider(baseWeapon);
             HandleRangeWeapon(baseWeapon);
             HandleMeleeWeapon(baseWeapon);
             HandleReloadableWeapon(baseWeapon);
             HandleAimableWeapon(baseWeapon);
+        }
+
+        private void HandleAnimationControllerProvider(IWeapon baseWeapon)
+        {
+            var controllerProvider = baseWeapon.GameObject.GetComponent<IAnimationControllerProvider>();
+            if (controllerProvider != null)
+                _characterAnimatior.runtimeAnimatorController = controllerProvider.Controller;
         }
 
         private void HandleRangeWeapon(IWeapon baseWeapon)
@@ -112,19 +111,13 @@ namespace WeaponSystem
                 _reloadableWeapon = baseWeapon as IReloadable;
         }
 
-        public void OnValidate()
-        {
-            if (_defaultWeaponPrefabList.Count > WeaponSlotsCount)
-                _defaultWeaponPrefabList.RemoveAt(_defaultWeaponPrefabList.Count - 1);
-        }
-
         public void UseWeapon()
         {
-            if (CurrentWeapon != null && CurrentWeapon.Use(_useData))
+            if (_currentWeapon != null && _currentWeapon.Use(_useData))
             {
                 if (_rangeWeapon != null)
                     OnUseRangedWeapon.Invoke();
-                if (_meleeWeapon != null)
+                else if (_meleeWeapon != null)
                     OnUseMeleeWeapon.Invoke();
             }
         }
@@ -150,9 +143,7 @@ namespace WeaponSystem
         public void Reload()
         {
             if (_reloadableWeapon != null && _reloadableWeapon.Reload())
-            {
                 OnReloadWeapon.Invoke();
-            }
         }
     }
 }
