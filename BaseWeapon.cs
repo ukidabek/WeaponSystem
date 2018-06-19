@@ -7,27 +7,15 @@ using System.Collections.Generic;
 
 namespace WeaponSystem
 {
-	public abstract class BaseWeapon : MonoBehaviour 
-	{
-		protected virtual bool CanBeUsed 
-		{ 
-			get 
-			{ 
-				foreach (var item in _useValidateLogic)
-					if(!item.Validate())
-						return false;
-
-				return  true; 
-			} 
-		}
-
-        //[SerializeField] private AnimatorOverrideController _characterAnimatorController = null;
-        //public AnimatorOverrideController CharacterAnimatorController { get { return _characterAnimatorController; } }
-
-        [SerializeField, Space] protected List<BaseWeaponValidationLogic> _useValidateLogic = new List<BaseWeaponValidationLogic>();
+	public abstract class BaseWeapon : MonoBehaviour, IWeapon
+    {
+        [Space]
+        [SerializeField] protected List<BaseWeaponValidationLogic> _useValidateLogic = new List<BaseWeaponValidationLogic>();
 		[SerializeField] protected List<BaseWeaponLogic> _useLogicList = new List<BaseWeaponLogic>();
 
         public IWeaponStatistics [] Statistics { get; protected set; }
+
+        public GameObject GameObject { get { return this.gameObject; } }
 
         private UnityEvent Used = new UnityEvent();
 
@@ -46,11 +34,11 @@ namespace WeaponSystem
 			Statistics = GetAllStatistics();
 		}
 
-		public virtual bool Use()
+		public virtual bool Use(params object [] data)
 		{
-			if(ValidateLogic(_useValidateLogic))
+			if(ValidateLogic(_useValidateLogic) && _useLogicList.Count != 0)
 			{
-				PerformLogic(_useLogicList);
+				PerformLogic(_useLogicList, data);
 				Used.Invoke();
                 return true;
 			}
@@ -58,17 +46,15 @@ namespace WeaponSystem
             return false;
 		}
 
-        public static void PerformLogic(List<BaseWeaponLogic> logicList)
+        public static void PerformLogic(List<BaseWeaponLogic> logicList, params object[] data)
         {
 			if(logicList.Count == 0) return;
-			
-            foreach (BaseWeaponLogic item in logicList)
-			{
-				item.Perform();
-			}
+
+            for (int i = 0; i < logicList.Count; i++)
+                logicList[i].Perform(data);
         }
 
-		public static bool ValidateLogic(List<BaseWeaponValidationLogic> validateLogic)
+		protected static bool ValidateLogic(List<BaseWeaponValidationLogic> validateLogic)
 		{
 			foreach (var item in validateLogic)
 				if(!item.Validate())
@@ -85,7 +71,13 @@ namespace WeaponSystem
 			return statistics.ToArray();
 		}
 
-		public virtual void Initialize() {}
+        public virtual void Initialize(params object[] data)
+        {
+            for (int i = 0; i < _useValidateLogic.Count; i++)
+                _useValidateLogic[i].Initialize(data);
 
+            for (int i = 0; i < _useValidateLogic.Count; i++)
+                _useLogicList[i].Initialize(data);
+        }
     }
 }

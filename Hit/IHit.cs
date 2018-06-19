@@ -1,5 +1,3 @@
-using UnityEngine;
-
 namespace WeaponSystem
 {
     public interface IHit

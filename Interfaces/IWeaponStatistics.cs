@@ -9,6 +9,6 @@ namespace WeaponSystem
 	{
 		string [] Name { get; }
 		string [] Value  { get; }
-		object [] Object { get;}
+		object [] Object { get; }
 	}
 }

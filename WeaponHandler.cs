@@ -7,6 +7,8 @@ using System.Collections.Generic;
 
 namespace WeaponSystem
 {
+    using Object = UnityEngine.Object;
+
     [Serializable]
     public class WeaponHandler
     {
@@ -25,32 +27,27 @@ namespace WeaponSystem
         public OnWeaponAim OnAimWeapon = new OnWeaponAim();
 
         [Header("Weapons slots")]
-        [SerializeField]
-        private int _weaponSlotsCount = 3;
+        [SerializeField] private int _weaponSlotsCount = 3;
         public int WeaponSlotsCount { get { return _weaponSlotsCount; } }
 
         [SerializeField] private int _currentWeaponIndex = 0;
 
-        [SerializeField, Space] private List<BaseWeapon> _weaponSlots = new List<BaseWeapon>();
-        public List<BaseWeapon> WeaponSlots { get { return _weaponSlots; } }
+        [Space]
+        [SerializeField] private List<IWeapon> _weaponSlots = new List<IWeapon>();
+        public List<IWeapon> WeaponSlots { get { return _weaponSlots; } }
+        public IWeapon CurrentWeapon { get { return _weaponSlots[_currentWeaponIndex]; } }
 
         [SerializeField, Space] private List<GameObject> _defaultWeaponPrefabList = new List<GameObject>();
 
-        public BaseWeapon CurrentWeapon { get { return _weaponSlots[_currentWeaponIndex]; } }
-
+        [Space]
+        [SerializeField] private Object[] _initializeData = null;
+        [SerializeField] private Object[] _useData = null;
 
         private bool _isAming = false;
 
-        private bool _isRangedWeapon = false;
         private IRange _rangeWeapon = null;
-
-        private bool _isMeleeWeapon;
         private IMelee _meleeWeapon = null;
-
-        private bool _isReloadable = false;
         private IReloadable _reloadableWeapon = null;
-
-        private bool _isAimable = false;
         private IAimable _aimableWeapon = null;
 
         public void CreateWeaponsInstances()
@@ -58,11 +55,11 @@ namespace WeaponSystem
             for (int i = 0; i < _defaultWeaponPrefabList.Count; i++)
             {
                 GameObject instance = GameObject.Instantiate(_defaultWeaponPrefabList[i], _weaponHolder.position, _weaponHolder.rotation, _weaponHolder);
-                BaseWeapon weapon = instance.GetComponent<BaseWeapon>();
+                IWeapon weapon = instance.GetComponent<IWeapon>();
                 _weaponSlots.Add(weapon);
 
-                weapon.Initialize();
-                weapon.gameObject.SetActive(false);
+                weapon.Initialize(_initializeData);
+                weapon.GameObject.SetActive(false);
             }
         }
 
@@ -73,15 +70,15 @@ namespace WeaponSystem
 
         public void SwitchToWeapon(int index)
         {
-            _weaponSlots[_currentWeaponIndex].gameObject.SetActive(false);
+            _weaponSlots[_currentWeaponIndex].GameObject.SetActive(false);
             _currentWeaponIndex = index;
             SwitchToWeapon(_weaponSlots[index]);
         }
 
-        private void SwitchToWeapon(BaseWeapon baseWeapon)
+        private void SwitchToWeapon(IWeapon baseWeapon)
         {
-            baseWeapon.gameObject.SetActive(true);
-            var controllerProvider = baseWeapon.GetComponent<IAnimationControllerProvider>();
+            baseWeapon.GameObject.SetActive(true);
+            var controllerProvider = baseWeapon.GameObject.GetComponent<IAnimationControllerProvider>();
             if(controllerProvider != null)
                 _characterAnimatior.runtimeAnimatorController = controllerProvider.Controller;
 
@@ -91,37 +88,27 @@ namespace WeaponSystem
             HandleAimableWeapon(baseWeapon);
         }
 
-        private void HandleRangeWeapon(BaseWeapon baseWeapon)
+        private void HandleRangeWeapon(IWeapon baseWeapon)
         {
-            _isRangedWeapon = baseWeapon is IRange;
-            if (_isRangedWeapon)
-            {
-                _rangeWeapon = baseWeapon as IRange;
-                _rangeWeapon.ShotOrigin = _shootOrigin;
-            }
+            if (baseWeapon is IRange)
+                (baseWeapon as IRange).ShotOrigin = _shootOrigin;
         }
 
-        private void HandleMeleeWeapon(BaseWeapon baseWeapon)
+        private void HandleMeleeWeapon(IWeapon baseWeapon)
         {
-            _isMeleeWeapon = baseWeapon is IMelee;
-            if (_isMeleeWeapon)
-            {
-                _meleeWeapon = baseWeapon as IMelee;
-                _meleeWeapon.HitOrigin = _hitOrigin;
-            }
+            if (baseWeapon is IMelee)
+                (baseWeapon as IMelee).HitOrigin = _hitOrigin;
         }
 
-        private void HandleAimableWeapon(BaseWeapon baseWeapon)
+        private void HandleAimableWeapon(IWeapon baseWeapon)
         {
-            _isAimable = baseWeapon is IAimable;
-            if (_isAimable)
+            if (baseWeapon is IAimable)
                 _aimableWeapon = baseWeapon as IAimable;
         }
 
-        private void HandleReloadableWeapon(BaseWeapon baseWeapon)
+        private void HandleReloadableWeapon(IWeapon baseWeapon)
         {
-            _isReloadable = baseWeapon is IReloadable;
-            if (_isReloadable)
+            if (baseWeapon is IReloadable)
                 _reloadableWeapon = baseWeapon as IReloadable;
         }
 
@@ -133,18 +120,18 @@ namespace WeaponSystem
 
         public void UseWeapon()
         {
-            if (CurrentWeapon.Use())
+            if (CurrentWeapon != null && CurrentWeapon.Use(_useData))
             {
-                if (_isRangedWeapon)
+                if (_rangeWeapon != null)
                     OnUseRangedWeapon.Invoke();
-                if (_isMeleeWeapon)
+                if (_meleeWeapon != null)
                     OnUseMeleeWeapon.Invoke();
             }
         }
 
         public void Aim(bool aim)
         {
-            if (_isAimable && aim != _isAming)
+            if (_aimableWeapon != null && aim != _isAming)
             {
                 _isAming = aim;
                 if (aim)
@@ -162,11 +149,10 @@ namespace WeaponSystem
 
         public void Reload()
         {
-            if (_isReloadable && _reloadableWeapon.Reload())
+            if (_reloadableWeapon != null && _reloadableWeapon.Reload())
             {
                 OnReloadWeapon.Invoke();
             }
         }
     }
-    [Serializable] public class OnWeaponAim : UnityEvent<object> {}
 }
