@@ -26,7 +26,6 @@ namespace WeaponSystem
         [SerializeField] private List<IWeapon> _weaponSlots = new List<IWeapon>();
         public List<IWeapon> WeaponSlots { get { return _weaponSlots; } }
 
-
         [Space, Header("Weapon handling data")]
         [SerializeField] private Object[] _initializeData = null;
         [SerializeField] private Object[] _useData = null;
@@ -117,6 +116,7 @@ namespace WeaponSystem
             {
                 if (_rangeWeapon != null)
                     OnUseRangedWeapon.Invoke();
+
                 else if (_meleeWeapon != null)
                     OnUseMeleeWeapon.Invoke();
             }
