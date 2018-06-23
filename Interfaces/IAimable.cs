@@ -1,6 +1,4 @@
-﻿using UnityEngine.Events;
-
-namespace WeaponSystem
+﻿namespace WeaponSystem
 {
     public interface IAimable
     {

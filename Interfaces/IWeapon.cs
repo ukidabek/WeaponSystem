@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace WeaponSystem
 {
@@ -9,6 +7,5 @@ namespace WeaponSystem
         GameObject GameObject { get; }
 
         bool Use(params object[] data);
-        void Initialize(params object[] data);
     }
 }

@@ -1,9 +1,10 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
-public interface IMelee
+namespace WeaponSystem
 {
-    float Range { get; }
-    Transform HitOrigin { get; set; }
+    public interface IMelee
+    {
+        float Range { get; }
+        Transform HitOrigin { get; set; }
+    }
 }

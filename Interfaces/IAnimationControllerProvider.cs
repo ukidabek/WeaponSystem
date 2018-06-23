@@ -1,8 +1,9 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
-public interface IAnimationControllerProvider
+namespace WeaponSystem
 {
-    AnimatorOverrideController Controller { get; }
+    public interface IAnimationControllerProvider
+    {
+        AnimatorOverrideController Controller { get; }
+    }
 }

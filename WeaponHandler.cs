@@ -52,7 +52,8 @@ namespace WeaponSystem
                 IWeapon weapon = instance.GetComponent<IWeapon>();
                 _weaponSlots.Add(weapon);
 
-                weapon.Initialize(_initializeData);
+                if(weapon is IWeaponInitialization)
+                    (weapon as IWeaponInitialization).Initialize(_initializeData);
                 weapon.GameObject.SetActive(false);
             }
         }

@@ -1,9 +1,4 @@
-﻿using UnityEngine;
-
-using System.Collections;
-using System.Collections.Generic;
-
-namespace WeaponSystem
+﻿namespace WeaponSystem
 {
 	public interface IWeaponStatistics 
 	{
