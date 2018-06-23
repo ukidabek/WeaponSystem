@@ -13,6 +13,8 @@ namespace WeaponSystem
         protected List<IWeaponValidationLogic> _useValidateLogicList = new List<IWeaponValidationLogic>();
         protected List<IWeaponInitialization> _weaponInitialization = new List<IWeaponInitialization>();
 
+        protected List<IWeaponStatistics> _weaponSatisticks = new List<IWeaponStatistics>();
+
         public GameObject GameObject { get { return this.gameObject; } }
 
         protected virtual void Awake()
@@ -22,6 +24,7 @@ namespace WeaponSystem
                 Add(_useLogic, weaponLogicObjectList[i]);
                 Add(_useValidateLogicList, weaponLogicObjectList[i]);
                 Add(_weaponInitialization, weaponLogicObjectList[i]);
+                Add(_weaponSatisticks, weaponLogicObjectList[i]);
             }
         }
 
