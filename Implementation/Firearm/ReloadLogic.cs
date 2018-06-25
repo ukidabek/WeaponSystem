@@ -10,8 +10,7 @@ namespace WeaponSystem.Implementation.Firearm
         [SerializeField, WeaponPart] private AmmunitionStock _stack = null;
 
         [SerializeField, Space] private bool _isReloadind = false;
-
-        [SerializeField, WeaponRequireComponent] private Animator _animator = null;
+        [SerializeField, WeaponRequireComponent(typeof(Animator))] AnimatorHandler _reloadAnimationHander = new AnimatorHandler();
 
         public bool Validate()
         {
@@ -20,7 +19,7 @@ namespace WeaponSystem.Implementation.Firearm
 
         public void Reload(object[] parameters)
         {
-            _isReloadind = false;
+            _isReloadind = true;
         }
 
         private void Update()
