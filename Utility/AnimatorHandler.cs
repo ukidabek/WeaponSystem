@@ -14,16 +14,6 @@ namespace WeaponSystem.Utility
 
         private bool _oldBoolValue;
 
-        public string Name
-        {
-            get { return _name; }
-            set
-            {
-                _name = value;
-                _nameHash = Animator.StringToHash(value);
-            }
-        }
-
         public void Set()
         {
             Set(Animator);

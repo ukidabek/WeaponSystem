@@ -9,7 +9,7 @@ namespace WeaponSystem.Utility
     public class AnimatorHandlerPropertyDrawer : PropertyDrawer
     {
         private List<string> parameters = new List<string>();
-
+        private int index = 0;
         public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
         {
             return EditorGUIUtility.singleLineHeight * 2;
@@ -17,9 +17,12 @@ namespace WeaponSystem.Utility
 
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
+            SerializedProperty animatorProperty = property.FindPropertyRelative("Animator");
+            SerializedProperty nameProperty = property.FindPropertyRelative("_name");
+            SerializedProperty nameHashProperty = property.FindPropertyRelative("_nameHash");
+
             var currentPosition = position;
             currentPosition.height = EditorGUIUtility.singleLineHeight;
-            SerializedProperty animatorProperty = property.FindPropertyRelative("Animator");
             EditorGUI.PropertyField(currentPosition, animatorProperty, new GUIContent("Animator"));
             currentPosition.y += EditorGUIUtility.singleLineHeight;
 
@@ -35,8 +38,24 @@ namespace WeaponSystem.Utility
                     }
                 }
             }
+            else
+            {
+                nameProperty.stringValue = string.Empty;
+                nameHashProperty.intValue = 0;
+            }
 
-            EditorGUI.Popup(currentPosition, 0, parameters.ToArray());
+            currentPosition.width = position.width / 2;
+            EditorGUI.LabelField(currentPosition, "Parameter name: ");
+            index = parameters.IndexOf(nameProperty.stringValue);
+            currentPosition.x = position.width / 2;
+            currentPosition.width = position.width / 2;
+            index = EditorGUI.Popup(currentPosition, index, parameters.ToArray());
+
+            if(index > -1)
+            {
+                nameProperty.stringValue = parameters[index];
+                nameHashProperty.intValue = Animator.StringToHash(parameters[index]);
+            }
         }
     }
 }
