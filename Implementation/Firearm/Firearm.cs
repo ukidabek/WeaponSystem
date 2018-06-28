@@ -1,35 +1,23 @@
-﻿using System.Collections;
+﻿using UnityEngine;
+
+using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.Events;
+
 using WeaponSystem.Utility;
+using UnityEngine.Events;
 
 namespace WeaponSystem.Implementation.Firearm
 {
     public class Firearm : RangeWeapon, IReloadable
     {
-        [SerializeField, WeaponPart] ReloadLogic reloadLogic = null;
+        [SerializeField, Space, WeaponPart] ReloadLogic reloadLogic = null;
 
-        public void AddReloadEndListener(UnityAction call)
-        {
-        }
+        public UnityEvent ReloadCallback { get { return reloadLogic.ReloadCallback; } }
 
-        public void AddReloadStartListener(UnityAction call)
+        public bool Reload()
         {
-        }
-
-        public bool Reload(params object[] parameters)
-        {
-            reloadLogic.Reload(parameters);
-            return false;
-        }
-
-        public void RemoveReloadEndtListener(UnityAction call)
-        {
-        }
-
-        public void RemoveReloadStartListener(UnityAction call)
-        {
+            reloadLogic.Reload();
+            return true;
         }
     }
 }

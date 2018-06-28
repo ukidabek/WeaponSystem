@@ -66,6 +66,8 @@ namespace WeaponSystem
         public void SwitchToWeapon(int index)
         {
            _currentWeapon.GameObject.SetActive(false);
+            if (_reloadableWeapon != null)
+                _reloadableWeapon.ReloadCallback.RemoveListener(Reload);
             SwitchToWeapon(_weaponSlots[_currentWeaponIndex = index]);
         }
 
@@ -108,7 +110,10 @@ namespace WeaponSystem
         private void HandleReloadableWeapon(IWeapon baseWeapon)
         {
             if (baseWeapon is IReloadable)
+            {
                 _reloadableWeapon = baseWeapon as IReloadable;
+                _reloadableWeapon.ReloadCallback.AddListener(Reload);
+            }
         }
 
         public void UseWeapon()

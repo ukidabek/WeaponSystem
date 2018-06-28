@@ -23,11 +23,13 @@ namespace WeaponSystem.Implementation.Firearm
 
         public void Reload(int delta)
         {
-            _size += delta;
+            _counter += delta;
         }
 
         public void Perform(params object[] data)
         {
+            if (Validate())
+                _counter--;
         }
 
         public bool Validate()
