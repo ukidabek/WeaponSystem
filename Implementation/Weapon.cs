@@ -19,13 +19,16 @@ namespace WeaponSystem.Implementation
         [LogicList] protected List<IWeaponInitialization> _weaponInitialization = new List<IWeaponInitialization>();
 
         [LogicList] protected List<IWeaponStatistics> _weaponSatisticks = new List<IWeaponStatistics>();
+        protected FieldInfo[] fieldInfo;
+
         public List<IWeaponStatistics> WeaponSatisticks { get { return _weaponSatisticks; } }
 
         public GameObject GameObject { get { return this.gameObject; } }
 
         protected virtual void Awake()
         {
-            WeaponSystemUtility.FillWeaponLogicList(this);
+            fieldInfo = WeaponSystemUtility.GetAllFieldsWithAttribute(this.GetType(), typeof(LogicListAttribute));
+            WeaponSystemUtility.FillWeaponLogicList(this, fieldInfo, weaponLogicObjectList.ToArray());
         }
 
         public void Initialize(params object[] data)

@@ -7,12 +7,18 @@ namespace WeaponSystem.Implementation.Firearm
     public class ReloadLogic : MonoBehaviour, IWeaponValidationLogic
     {
         [SerializeField, WeaponPart] private Clip _clip = null;
-        [SerializeField, WeaponPart] private AmmunitionStock _stack = null;
+        [SerializeField] private AmmunitionStock _stack = null;
+        public AmmunitionStock Stack
+        {
+            get { return _stack; }
+            set { _stack = value; }
+        }
 
         [SerializeField, Space] private bool _isReloadind = false;
         [SerializeField, WeaponRequireComponent(typeof(Animator))] AnimatorHandler _reloadAnimationHander = new AnimatorHandler();
 
         public UnityEvent ReloadCallback = new UnityEvent();
+
 
         public bool Validate()
         {
@@ -21,11 +27,19 @@ namespace WeaponSystem.Implementation.Firearm
 
         public void Reload()
         {
-            if (_stack.Resource > 0)
+            var refil = 0;
+            if (_stack.Resource > _clip.Delta)
             {
                 _stack.Resource -= _clip.Delta;
-                _clip.Reload(_clip.Delta);
+                refil = _clip.Delta;
             }
+            else
+            {
+                refil = _stack.Resource;
+                _stack.Resource -= _stack.Resource;
+            }
+
+            _clip.Reload(refil);
 
             //_isReloadind = true;
         }

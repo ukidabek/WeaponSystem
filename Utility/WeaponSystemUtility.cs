@@ -22,23 +22,32 @@ namespace WeaponSystem.Utility
             var logicObjectsList = GetAllFieldsWithAttribute(weapon.GetType(), typeof(LogicObjectsAttribute));
             if(logicObjectsList.Length > 0)
             {
-                var objectList = logicObjectsList[0].GetValue(weapon) as IList;
-                var fieldInfo = GetAllFieldsWithAttribute(weapon.GetType(), typeof(LogicListAttribute));
-
+                var objectList = (logicObjectsList[0].GetValue(weapon) as IList);
+                object[] objectArray = new object[objectList.Count];
                 for (int i = 0; i < objectList.Count; i++)
+                    objectArray[i] = objectList[i];
+                FillWeaponLogicList(weapon, logicObjectsList, objectArray);
+            }
+            else
+                Debug.Log("Provided IWeapon don't have field type List<Object> marked with LogicObjects attribute!");
+        }
+
+        public static void FillWeaponLogicList(IWeapon weapon, FieldInfo[] fieldInfo, params object[] logicObjects)
+        {
+            if (logicObjects.Length > 0)
+            {
+                for (int i = 0; i < logicObjects.Length; i++)
                 {
                     for (int j = 0; j < fieldInfo.Length; j++)
                     {
                         var listType = fieldInfo[j].FieldType;
                         var listObject = fieldInfo[j].GetValue(weapon);
                         var list = (listObject as IList);
-                        Add(list, objectList[i], listType.GetGenericArguments()[0]);
+                        Add(list, logicObjects[i], listType.GetGenericArguments()[0]);
                         fieldInfo[j].SetValue(weapon, list);
                     }
                 }
             }
-            else
-                Debug.Log("Provided IWeapon don't have field type List<Object> marked with LogicObjects attribute!");
         }
 
         protected static object Add(IList list, object objet, Type type)

@@ -29,6 +29,7 @@ namespace WeaponSystem
         [Space, Header("Weapon handling data")]
         [SerializeField] private Object[] _initializeData = null;
         [SerializeField] private Object[] _useData = null;
+        [SerializeField] private Object[] _reloadData = null;
 
         [Header("Unity events")]
         public UnityEvent OnUseMeleeWeapon = new UnityEvent();
@@ -74,12 +75,12 @@ namespace WeaponSystem
         private void SwitchToWeapon(IWeapon baseWeapon)
         {
             baseWeapon.GameObject.SetActive(true);
-
             HandleAnimationControllerProvider(baseWeapon);
             HandleRangeWeapon(baseWeapon);
             HandleMeleeWeapon(baseWeapon);
             HandleReloadableWeapon(baseWeapon);
             HandleAimableWeapon(baseWeapon);
+            HandleAmunitionUser(baseWeapon);
         }
 
         private void HandleAnimationControllerProvider(IWeapon baseWeapon)
@@ -114,6 +115,12 @@ namespace WeaponSystem
                 _reloadableWeapon = baseWeapon as IReloadable;
                 _reloadableWeapon.ReloadCallback.AddListener(Reload);
             }
+        }
+
+        private void HandleAmunitionUser(IWeapon baseWeapon)
+        {
+            if (baseWeapon is IAmunitionUser)
+                (baseWeapon as IAmunitionUser).GetAmunition(_reloadData);
         }
 
         public void UseWeapon()

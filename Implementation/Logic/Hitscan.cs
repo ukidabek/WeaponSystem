@@ -1,6 +1,7 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.Events;
+
+using System;
 
 namespace WeaponSystem.Implementation.Logic
 {
