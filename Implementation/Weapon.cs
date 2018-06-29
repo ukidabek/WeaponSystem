@@ -1,10 +1,10 @@
 ﻿using UnityEngine;
 
+using System;
+using System.Reflection;
 using System.Collections.Generic;
 
 using WeaponSystem.Utility;
-using System;
-using System.Reflection;
 
 namespace WeaponSystem.Implementation
 {
@@ -31,7 +31,7 @@ namespace WeaponSystem.Implementation
             WeaponSystemUtility.FillWeaponLogicList(this, fieldInfo, weaponLogicObjectList.ToArray());
         }
 
-        public void Initialize(params object[] data)
+        public virtual void Initialize(params object[] data)
         {
             for (int i = 0; i < _weaponInitialization.Count; i++)
                 _weaponInitialization[i].Initialize(data);
@@ -72,6 +72,5 @@ namespace WeaponSystem.Implementation
             var componentDictionary = new Dictionary<Type, Object>();
             WeaponSystemUtility.GetPartTypes(this, gameObject.transform, componentDictionary, weaponLogicObjectList);
         }
-
     }
 }

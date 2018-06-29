@@ -5,7 +5,7 @@ using System;
 
 namespace WeaponSystem.Implementation.Logic
 {
-    public class Hitscan : MonoBehaviour, IWeaponLogic, IWeaponTransform, IWeaponStatistics
+    public class Hitscan : MonoBehaviour, IWeaponLogic, IWeaponTransform, IWeaponStatistics, IWeaponInitialization
     {
         [SerializeField, Space] private float _range = 100f;
         public GameObjectUnityEvent OnHitCallback = new GameObjectUnityEvent();
@@ -27,6 +27,15 @@ namespace WeaponSystem.Implementation.Logic
                 OnHitCallback.Invoke(hit.collider.gameObject);
                 Debug.DrawLine(hit.point, Transform.position, Color.red, 1f);
                 Debug.Log(hit.transform.gameObject.name);
+            }
+        }
+
+        public void Initialize(params object[] data)
+        {
+            for (int i = 0; i < data.Length; i++)
+            {
+                if(data[i] is ShotOrigin)
+                    Transform = (data[i] as ShotOrigin).gameObject.transform;
             }
         }
     }
