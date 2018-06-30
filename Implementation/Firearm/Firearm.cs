@@ -7,7 +7,7 @@ namespace WeaponSystem.Implementation.Firearm
 {
     public class Firearm : RangeWeapon, IReloadable, IAimable
     {
-        [SerializeField, Space, WeaponPart] ReloadLogic reloadLogic = null;
+        [SerializeField, Space, WeaponPart, InitializeWeaponComponent(typeof(AmmunitionStock))] ReloadLogic reloadLogic = null;
 
         public UnityEvent ReloadCallback { get { return reloadLogic.ReloadCallback; } }
 
@@ -17,19 +17,18 @@ namespace WeaponSystem.Implementation.Firearm
             return true;
         }
 
-        public override void Initialize(params object[] data)
-        {
-            base.Initialize(data);
-            for (int i = 0; i < data.Length; i++)
-            {
-                if (data[i] is AmmunitionStock)
-                {
-                    reloadLogic.Stack = (data[i] as AmmunitionStock);
-                    break;
-                }
-            }
-            WeaponSystemUtility.FillWeaponLogicList(this, fieldInfo, data);
-        }
+        //public override void Initialize(params object[] data)
+        //{
+        //    base.Initialize(data);
+        //    for (int i = 0; i < data.Length; i++)
+        //    {
+        //        if (data[i] is AmmunitionStock)
+        //        {
+        //            reloadLogic.Stack = (data[i] as AmmunitionStock);
+        //            break;
+        //        }
+        //    }
+        //}
 
         public void Aim() {}
 

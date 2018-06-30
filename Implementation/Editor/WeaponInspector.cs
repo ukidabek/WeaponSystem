@@ -18,7 +18,7 @@ namespace WeaponSystem.Implementation
         {
             base.OnInspectorGUI();
             if (GUILayout.Button("Get required components"))
-                WeaponSystemUtility.FillRequirements(weapon, weapon.gameObject);
+                WeaponSystemUtility.FillRequirements<WeaponRequireComponentAttribute>(weapon);
         }
     }
 }

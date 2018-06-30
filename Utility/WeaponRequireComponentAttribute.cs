@@ -2,14 +2,21 @@
 
 namespace WeaponSystem.Utility
 {
-    public class WeaponRequireComponentAttribute : Attribute
+    public abstract class InitializationAttribute : Attribute
     {
         public Type Type { get; private set; }
 
-        public WeaponRequireComponentAttribute() {}
-        public WeaponRequireComponentAttribute(Type type)
+        public InitializationAttribute() { }
+        public InitializationAttribute(Type type)
         {
             Type = type;
         }
+    }
+
+    public class WeaponRequireComponentAttribute : InitializationAttribute
+    {
+        public WeaponRequireComponentAttribute() {}
+
+        public WeaponRequireComponentAttribute(Type type) : base(type) {}
     }
 }

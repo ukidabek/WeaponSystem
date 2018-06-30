@@ -19,7 +19,6 @@ namespace WeaponSystem.Implementation.Firearm
 
         public UnityEvent ReloadCallback = new UnityEvent();
 
-
         public bool Validate()
         {
             return !_isReloadind;

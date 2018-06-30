@@ -106,45 +106,58 @@ namespace WeaponSystem.Utility
             return component;
         }
 
-        public static void FillRequirements(IWeapon weapon, GameObject gameObject)
+        public static void FillRequirements<T>(IWeapon weapon) where T : InitializationAttribute
         {
             var logicObjectsList = GetAllFieldsWithAttribute(weapon.GetType(), typeof(LogicObjectsAttribute));
             var list = logicObjectsList[0].GetValue(weapon) as IList;
 
             for (int i = 0; i < list.Count; i++)
             {
-                var fields = GetAllFieldsWithAttribute(list[i].GetType(), typeof(WeaponRequireComponentAttribute));
-                for (int j = 0; j < fields.Length; j++)
+                var fields = GetAllFieldsWithAttribute(list[i].GetType(), typeof(T));
+                FillRequirements<T>(weapon, list[i], fields);
+            }
+        }
+
+        public static void FillRequirements<T>(IWeapon weapon, object instance, FieldInfo[] fields, object valueToSet = null) where T : InitializationAttribute
+        {
+            for (int j = 0; j < fields.Length; j++)
+            {
+                var attributes = fields[j].GetCustomAttributes(false);
+                for (int k = 0; k < attributes.Length; k++)
                 {
-                    var attributes = fields[j].GetCustomAttributes(false);
-                    for (int k = 0; k < attributes.Length; k++)
+                    if (attributes[k] is T)
                     {
-                        if (attributes[k] is WeaponRequireComponentAttribute)
+                        var requirement = attributes[k] as T;
+                        if (requirement.Type != null)
                         {
-                            var requirement = attributes[k] as WeaponRequireComponentAttribute;
-                            if (requirement.Type != null)
+                            if(valueToSet == null)
                             {
-                                var component = GetComponet(gameObject, requirement.Type);
-                                if (component == null)
-                                    ComponentIsMissing(gameObject, fields[j].FieldType);
-                                var @object = fields[j].GetValue(list[i]);
-                                var objectFields = @object.GetType().GetFields();
-                                for (int l = 0; l < objectFields.Length; l++)
+                                valueToSet = GetComponet(weapon.GameObject, requirement.Type);
+                                if (valueToSet == null)
+                                    ComponentIsMissing(weapon.GameObject, fields[j].FieldType);
+                            }
+
+                            var @object = fields[j].GetValue(instance);
+                            var objectFields = @object.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
+                            for (int l = 0; l < objectFields.Length; l++)
+                            {
+                                if (objectFields[l].FieldType == valueToSet.GetType())
                                 {
-                                    if (objectFields[l].FieldType == requirement.Type)
-                                    {
-                                        objectFields[l].SetValue(@object, component);
-                                        break;
-                                    }
+                                    objectFields[l].SetValue(@object, valueToSet);
+                                    break;
                                 }
                             }
-                            else
+                        }
+                        else
+                        {
+                            if(valueToSet == null)
                             {
-                                var component = GetComponet(gameObject, fields[j].FieldType);
-                                if (component == null)
-                                    ComponentIsMissing(gameObject, fields[j].FieldType);
-                                fields[j].SetValue(list[i], component);
+                                valueToSet = GetComponet(weapon.GameObject, fields[j].FieldType);
+                                if (valueToSet == null)
+                                    ComponentIsMissing(weapon.GameObject, fields[j].FieldType);
                             }
+                            if(fields[j].FieldType == valueToSet.GetType())
+                                fields[j].SetValue(instance, valueToSet);
                         }
                     }
                 }

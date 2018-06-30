@@ -9,17 +9,18 @@ namespace WeaponSystem.Implementation
 {
     public class RangeWeapon : Weapon, IRange
     {
-        [LogicList] protected List<IWeaponTransform> _weaponTransformsList = new List<IWeaponTransform>();
+        //[LogicList] protected List<IWeaponTransform> _weaponTransformsList = new List<IWeaponTransform>();
+        [SerializeField, InitializeWeaponComponent] protected ShotOrigin shotOrigin = null;
 
-        private Transform _shotOrigin = null;
+        //private Transform _shotOrigin = null;
         public Transform ShotOrigin
         {
-            get { return _shotOrigin; }
+            get { return shotOrigin.transform; }
             set
             {
-                _shotOrigin = value;
-                for (int i = 0; i < _weaponTransformsList.Count; i++)
-                    _weaponTransformsList[i].Transform = value;
+                shotOrigin.transform.position = value.position;
+                shotOrigin.transform.rotation = value.rotation;
+                shotOrigin.transform.localScale = value.localScale;
             }
         }
     }

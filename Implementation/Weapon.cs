@@ -19,22 +19,28 @@ namespace WeaponSystem.Implementation
         [LogicList] protected List<IWeaponInitialization> _weaponInitialization = new List<IWeaponInitialization>();
 
         [LogicList] protected List<IWeaponStatistics> _weaponSatisticks = new List<IWeaponStatistics>();
-        protected FieldInfo[] fieldInfo;
-
+        protected FieldInfo[] logicListField = null;
+        protected FieldInfo[] initializeFields = null;
         public List<IWeaponStatistics> WeaponSatisticks { get { return _weaponSatisticks; } }
 
         public GameObject GameObject { get { return this.gameObject; } }
 
         protected virtual void Awake()
         {
-            fieldInfo = WeaponSystemUtility.GetAllFieldsWithAttribute(this.GetType(), typeof(LogicListAttribute));
-            WeaponSystemUtility.FillWeaponLogicList(this, fieldInfo, weaponLogicObjectList.ToArray());
+            logicListField = WeaponSystemUtility.GetAllFieldsWithAttribute(this.GetType(), typeof(LogicListAttribute));
+            initializeFields = WeaponSystemUtility.GetAllFieldsWithAttribute(this.GetType(), typeof(InitializeWeaponComponentAttribute));
+            WeaponSystemUtility.FillWeaponLogicList(this, logicListField, weaponLogicObjectList.ToArray());
         }
 
         public virtual void Initialize(params object[] data)
         {
+            for (int i = 0; i < data.Length; i++)
+                WeaponSystemUtility.FillRequirements<InitializeWeaponComponentAttribute>(this, this, initializeFields, data[i]);
+
             for (int i = 0; i < _weaponInitialization.Count; i++)
                 _weaponInitialization[i].Initialize(data);
+
+            WeaponSystemUtility.FillWeaponLogicList(this, logicListField, data);
         }
 
         protected bool ValidateLogic()
