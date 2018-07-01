@@ -1,16 +1,17 @@
-﻿using System.Reflection;
+﻿using System;
+using System.Reflection;
 
 namespace WeaponSystem.Utility
 {
-    public struct ObjectField
+    public struct ObjectFields<T> where T : Attribute
     {
         public object FieldsOwner;
         public FieldInfo[] FieldsToInitialize;
 
-        public ObjectField(object fieldsOwner) : this()
+        public ObjectFields(object fieldsOwner) : this()
         {
             FieldsOwner = fieldsOwner;
-            FieldsToInitialize = WeaponSystemUtility.GetAllFieldsWithAttribute(FieldsOwner.GetType(), typeof(InitializeWeaponComponentAttribute));
+            FieldsToInitialize = WeaponSystemUtility.GetAllFieldsWithAttribute(FieldsOwner.GetType(), typeof(T));
         }
     }
 }

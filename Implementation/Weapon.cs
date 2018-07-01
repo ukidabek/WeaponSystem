@@ -12,6 +12,8 @@ namespace WeaponSystem.Implementation
 
     public class Weapon : MonoBehaviour, IWeapon, IWeaponInitialization
     {
+        public GameObject GameObject { get { return this.gameObject; } }
+
         [SerializeField, LogicObjects] protected List<Object> weaponLogicObjectList = new List<Object>();
 
         [LogicList] protected List<IWeaponLogic> _useLogic = new List<IWeaponLogic>();
@@ -21,20 +23,17 @@ namespace WeaponSystem.Implementation
         [LogicList] protected List<IWeaponStatistics> _weaponSatisticks = new List<IWeaponStatistics>();
         protected FieldInfo[] logicListField = null;
 
-        protected List<ObjectField> objectFieldList = new List<ObjectField>();
+        protected List<ObjectFields<InitializeWeaponComponentAttribute>> objectFieldList = new List<ObjectFields<InitializeWeaponComponentAttribute>>();
 
         public List<IWeaponStatistics> WeaponSatisticks { get { return _weaponSatisticks; } }
-
-        public GameObject GameObject { get { return this.gameObject; } }
 
         protected virtual void Awake()
         {
             logicListField = WeaponSystemUtility.GetAllFieldsWithAttribute(this.GetType(), typeof(LogicListAttribute));
 
             for (int i = 0; i < weaponLogicObjectList.Count; i++)
-                objectFieldList.Add(new ObjectField(weaponLogicObjectList[i]));
-
-            objectFieldList.Add(new ObjectField(this));
+                objectFieldList.Add(new ObjectFields<InitializeWeaponComponentAttribute>(weaponLogicObjectList[i]));
+            objectFieldList.Add(new ObjectFields<InitializeWeaponComponentAttribute>(this));
 
             WeaponSystemUtility.FillWeaponLogicList(this, logicListField, weaponLogicObjectList.ToArray());
         }

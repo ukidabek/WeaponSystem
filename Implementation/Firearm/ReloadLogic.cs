@@ -8,10 +8,27 @@ namespace WeaponSystem.Implementation.Firearm
     public class ReloadLogic : MonoBehaviour, IWeaponValidationLogic
     {
         [Serializable]
+        public class AnimatorState
+        {
+            [SerializeField] protected Animator animator = null;
+            [SerializeField] protected string stateName = string.Empty;
+            [SerializeField] protected int layerIndex = 0;
+
+            public bool InState()
+            {
+                var stateInfo = animator.GetCurrentAnimatorStateInfo(layerIndex);
+                int hash = Animator.StringToHash(stateName);
+
+                return stateInfo.shortNameHash == hash;
+            }
+        }
+
+        [Serializable]
         public abstract class AnimationParameter
         {
             [SerializeField] protected Animator animator = null;
             [SerializeField] protected string parameterName = string.Empty;
+
             public abstract void Set(params object[] data);
         }
 
@@ -36,6 +53,7 @@ namespace WeaponSystem.Implementation.Firearm
 
         [SerializeField, WeaponRequireComponent(typeof(Animator))] private AnimationTrigger _weaponReload = new AnimationTrigger();
         [SerializeField, InitializeWeaponComponent(typeof(Animator))] private AnimationTrigger _userReload = new AnimationTrigger();
+        [SerializeField, InitializeWeaponComponent(typeof(Animator))] private AnimatorState _reloadAnimationState = new AnimatorState();
 
         public UnityEvent ReloadCallback = new UnityEvent();
 
@@ -59,16 +77,22 @@ namespace WeaponSystem.Implementation.Firearm
             }
 
             _clip.Reload(refil);
+            _userReload.Set();
 
-            //_isReloadind = true;
+            _isReloadind = true;
         }
 
         private void Update()
         {
-            if(_clip.Counter == 0)
+            _isReloadind = _reloadAnimationState.InState();
+
+            if (!_isReloadind)
             {
-                Reload();
-                ReloadCallback.Invoke();
+                if(_clip.Counter == 0)
+                {
+                    Reload();
+                    ReloadCallback.Invoke();
+                }
             }
         }
     }
