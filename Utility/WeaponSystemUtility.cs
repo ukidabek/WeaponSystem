@@ -106,7 +106,7 @@ namespace WeaponSystem.Utility
             return component;
         }
 
-        public static void FillRequirements<T>(IWeapon weapon) where T : InitializationAttribute
+        public static void FillRequirements<T>(IWeapon weapon, object valueToSet = null) where T : InitializationAttribute
         {
             var logicObjectsList = GetAllFieldsWithAttribute(weapon.GetType(), typeof(LogicObjectsAttribute));
             var list = logicObjectsList[0].GetValue(weapon) as IList;
@@ -114,7 +114,7 @@ namespace WeaponSystem.Utility
             for (int i = 0; i < list.Count; i++)
             {
                 var fields = GetAllFieldsWithAttribute(list[i].GetType(), typeof(T));
-                FillRequirements<T>(weapon, list[i], fields);
+                FillRequirements<T>(weapon, list[i], fields, valueToSet);
             }
         }
 
@@ -159,6 +159,40 @@ namespace WeaponSystem.Utility
                             if(fields[j].FieldType == valueToSet.GetType())
                                 fields[j].SetValue(instance, valueToSet);
                         }
+                    }
+                }
+            }
+        }
+
+        public static void FillListOfFields(object owener, FieldInfo[] fields, params object[] objectToSet)
+        {
+            for (int i = 0; i < fields.Length; i++)
+            {
+                var attribute = fields[i].GetCustomAttributes(false).FirstOrDefault(a=> a.GetType() == typeof(InitializeWeaponComponentAttribute)) as InitializeWeaponComponentAttribute;
+
+                FieldInfo field = null;
+                object @object = null;
+                Type type = null;
+
+                if(attribute.Type == null)
+                {
+                    @object = owener;
+                    type = fields[i].FieldType;
+                    field = fields[i];
+                }
+                else
+                {
+                    @object = fields[i].GetValue(owener);
+                    type = attribute.Type;
+                    field = @object.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance).FirstOrDefault(f => f.FieldType == attribute.Type);
+                }
+
+                for (int j = 0; j < objectToSet.Length; j++)
+                {
+                    if (type == objectToSet[j].GetType())
+                    {
+                        field.SetValue(@object, objectToSet[j]);
+                        break;
                     }
                 }
             }

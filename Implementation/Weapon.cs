@@ -20,7 +20,9 @@ namespace WeaponSystem.Implementation
 
         [LogicList] protected List<IWeaponStatistics> _weaponSatisticks = new List<IWeaponStatistics>();
         protected FieldInfo[] logicListField = null;
-        protected FieldInfo[] initializeFields = null;
+
+        protected List<ObjectField> objectFieldList = new List<ObjectField>();
+
         public List<IWeaponStatistics> WeaponSatisticks { get { return _weaponSatisticks; } }
 
         public GameObject GameObject { get { return this.gameObject; } }
@@ -28,14 +30,19 @@ namespace WeaponSystem.Implementation
         protected virtual void Awake()
         {
             logicListField = WeaponSystemUtility.GetAllFieldsWithAttribute(this.GetType(), typeof(LogicListAttribute));
-            initializeFields = WeaponSystemUtility.GetAllFieldsWithAttribute(this.GetType(), typeof(InitializeWeaponComponentAttribute));
+
+            for (int i = 0; i < weaponLogicObjectList.Count; i++)
+                objectFieldList.Add(new ObjectField(weaponLogicObjectList[i]));
+
+            objectFieldList.Add(new ObjectField(this));
+
             WeaponSystemUtility.FillWeaponLogicList(this, logicListField, weaponLogicObjectList.ToArray());
         }
 
         public virtual void Initialize(params object[] data)
         {
-            for (int i = 0; i < data.Length; i++)
-                WeaponSystemUtility.FillRequirements<InitializeWeaponComponentAttribute>(this, this, initializeFields, data[i]);
+            for (int i = 0; i < objectFieldList.Count; i++)
+                WeaponSystemUtility.FillListOfFields(objectFieldList[i].FieldsOwner, objectFieldList[i].FieldsToInitialize, data);
 
             for (int i = 0; i < _weaponInitialization.Count; i++)
                 _weaponInitialization[i].Initialize(data);
