@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 
 using WeaponSystem.Utility;
+using WeaponSystem.Interfaces.Weapon;
 
 namespace WeaponSystem.Implementation
 {

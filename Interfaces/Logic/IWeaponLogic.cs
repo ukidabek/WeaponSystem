@@ -1,4 +1,4 @@
-﻿namespace WeaponSystem
+﻿namespace WeaponSystem.Interfaces.Logic
 {
     public interface IWeaponLogic
     {

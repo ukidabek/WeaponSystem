@@ -2,6 +2,8 @@
 using UnityEngine.Events;
 
 using System;
+using WeaponSystem.Interfaces.Logic;
+using WeaponSystem.Interfaces.Weapon;
 
 namespace WeaponSystem.Implementation.Logic
 {

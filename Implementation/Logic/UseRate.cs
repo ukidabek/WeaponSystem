@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using WeaponSystem.Interfaces.Logic;
+
 
 namespace WeaponSystem.Implementation.Logic
 {

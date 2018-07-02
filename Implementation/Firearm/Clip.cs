@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using WeaponSystem.Interfaces.Logic;
 
 namespace WeaponSystem.Implementation.Firearm
 {

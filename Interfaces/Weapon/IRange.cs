@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace WeaponSystem
+namespace WeaponSystem.Interfaces.Weapon
 {
     public interface IRange
     {

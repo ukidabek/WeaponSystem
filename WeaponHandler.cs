@@ -2,6 +2,8 @@
 using UnityEngine.Events;
 
 using System;
+using WeaponSystem.Interfaces.Logic;
+using WeaponSystem.Interfaces.Weapon;
 
 namespace WeaponSystem
 {
@@ -19,14 +21,15 @@ namespace WeaponSystem
         public UnityEvent OnUseRangedWeapon = new UnityEvent();
         public UnityEvent OnReloadWeapon = new UnityEvent();
         public OnWeaponAim OnAimWeapon = new OnWeaponAim();
-
-        private bool _isAming = false;
+        public AmmunitionUpdateCallback OnAmmunitionUpdate = new AmmunitionUpdateCallback();
+        public AmmunitionProcentaeUpdateCallback AmmunitionProcentaeUpdate = new AmmunitionProcentaeUpdateCallback();
 
         private IWeapon _currentWeapon = null;
         private IRange _rangeWeapon = null;
         private IMelee _meleeWeapon = null;
         private IReloadable _reloadableWeapon = null;
         private IAimable _aimableWeapon = null;
+        private IAmmunition _ammunition = null;
 
         public void EquipWeapon(IWeapon baseWeapon)
         {
@@ -35,6 +38,7 @@ namespace WeaponSystem
             HandleReloadableWeapon(baseWeapon);
             HandleAimableWeapon(baseWeapon);
             HandleWeaponInitialization(baseWeapon);
+            HandleWeaponAmmunition(baseWeapon);
         }
 
         private void HandleAimableWeapon(IWeapon baseWeapon)
@@ -58,6 +62,12 @@ namespace WeaponSystem
                 (baseWeapon as IWeaponInitialization).Initialize(_initializeData);
         }
 
+        private void HandleWeaponAmmunition(IWeapon baseWeapon)
+        {
+            if (baseWeapon is IAmmunition)
+                _ammunition = (baseWeapon as IAmmunition);
+        }
+
         public void UseWeapon()
         {
             if (_currentWeapon != null && _currentWeapon.Use(_useData))
@@ -70,21 +80,21 @@ namespace WeaponSystem
             }
         }
 
-        public void Aim(bool aim)
+        public void Aim()
         {
-            if (_aimableWeapon != null && aim != _isAming)
+            if(_aimableWeapon != null)
             {
-                _isAming = aim;
-                if (aim)
-                {
-                    _aimableWeapon.Aim();
-                    OnAimWeapon.Invoke(true);
-                }
-                else
-                {
-                    _aimableWeapon.AimOff();
-                    OnAimWeapon.Invoke(false);
-                }
+                _aimableWeapon.Aim();
+                OnAimWeapon.Invoke(true);
+            }
+        }
+
+        public void AimOff()
+        {
+            if (_aimableWeapon != null)
+            {
+                _aimableWeapon.AimOff();
+                OnAimWeapon.Invoke(false);
             }
         }
 
@@ -93,5 +103,18 @@ namespace WeaponSystem
             if (_reloadableWeapon != null && _reloadableWeapon.Reload())
                 OnReloadWeapon.Invoke();
         }
+
+        private void Update()
+        {
+            if (_ammunition != null)
+            {
+                OnAmmunitionUpdate.Invoke(_ammunition.ClipStatus, _ammunition.AmmunitionStatus);
+                AmmunitionProcentaeUpdate.Invoke(_ammunition.ClipProcentage, _ammunition.AmmunitionProcentage);
+            }
+        }
     }
+
+    [Serializable] public class AmmunitionUpdateCallback : UnityEvent<int, int> {}
+    [Serializable] public class AmmunitionProcentaeUpdateCallback : UnityEvent<float, float> { }
+
 }

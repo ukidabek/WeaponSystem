@@ -1,6 +1,6 @@
 ﻿using UnityEngine.Events;
 
-namespace WeaponSystem
+namespace WeaponSystem.Interfaces.Weapon
 {
     public interface IReloadable
     {

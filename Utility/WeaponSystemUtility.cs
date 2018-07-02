@@ -4,6 +4,7 @@ using System.Reflection;
 using System.Collections;
 using UnityEngine;
 using System.Collections.Generic;
+using WeaponSystem.Interfaces.Weapon;
 
 namespace WeaponSystem.Utility
 {

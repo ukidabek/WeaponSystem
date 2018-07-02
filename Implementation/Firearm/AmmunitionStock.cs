@@ -13,10 +13,11 @@ namespace WeaponSystem.Implementation.Firearm
         }
 
         [SerializeField] private int _maxRosiurceCount = 200;
+        public int MaxRosourceCount { get { return _maxRosiurceCount; } }
 
         private void Awake()
         {
-            _resource = _maxRosiurceCount;
+            _resource = MaxRosourceCount;
         }
     }
 }

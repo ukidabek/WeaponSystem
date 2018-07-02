@@ -1,47 +1,17 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.Events;
+
+using WeaponSystem.Implementation.Animations;
 using WeaponSystem.Utility;
+using WeaponSystem.Interfaces.Logic;
 
 namespace WeaponSystem.Implementation.Firearm
 {
     public class ReloadLogic : MonoBehaviour, IWeaponValidationLogic
     {
-        [Serializable]
-        public class AnimatorState
-        {
-            [SerializeField] protected Animator animator = null;
-            [SerializeField] protected string stateName = string.Empty;
-            [SerializeField] protected int layerIndex = 0;
-
-            public bool InState()
-            {
-                var stateInfo = animator.GetCurrentAnimatorStateInfo(layerIndex);
-                int hash = Animator.StringToHash(stateName);
-
-                return stateInfo.shortNameHash == hash;
-            }
-        }
-
-        [Serializable]
-        public abstract class AnimationParameter
-        {
-            [SerializeField] protected Animator animator = null;
-            [SerializeField] protected string parameterName = string.Empty;
-
-            public abstract void Set(params object[] data);
-        }
-
-        [Serializable]
-        public class AnimationTrigger : AnimationParameter
-        {
-            public override void Set(params object[] data)
-            {
-                animator.SetTrigger(parameterName);
-            }
-        }
-
         [SerializeField, WeaponPart] private Clip _clip = null;
+        public Clip Clip { get { return _clip; } }
+
         [SerializeField, InitializeWeaponComponent] private AmmunitionStock _stack = null;
         public AmmunitionStock Stack
         {
@@ -65,10 +35,10 @@ namespace WeaponSystem.Implementation.Firearm
         public void Reload()
         {
             var refil = 0;
-            if (_stack.Resource > _clip.Delta)
+            if (_stack.Resource > Clip.Delta)
             {
-                _stack.Resource -= _clip.Delta;
-                refil = _clip.Delta;
+                _stack.Resource -= Clip.Delta;
+                refil = Clip.Delta;
             }
             else
             {
@@ -76,7 +46,7 @@ namespace WeaponSystem.Implementation.Firearm
                 _stack.Resource -= _stack.Resource;
             }
 
-            _clip.Reload(refil);
+            Clip.Reload(refil);
             _userReload.Set();
 
             _isReloadind = true;
@@ -88,7 +58,7 @@ namespace WeaponSystem.Implementation.Firearm
 
             if (!_isReloadind)
             {
-                if(_clip.Counter == 0)
+                if(Clip.Counter == 0)
                 {
                     Reload();
                     ReloadCallback.Invoke();

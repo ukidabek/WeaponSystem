@@ -2,6 +2,8 @@
 
 using System.Collections.Generic;
 
+using WeaponSystem.Interfaces.Weapon;
+
 namespace WeaponSystem
 {
     public class WeaponSpawner : MonoBehaviour

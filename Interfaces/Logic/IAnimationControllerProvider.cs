@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace WeaponSystem
+namespace WeaponSystem.Interfaces.Logic
 {
     public interface IAnimationControllerProvider
     {

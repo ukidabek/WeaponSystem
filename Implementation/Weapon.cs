@@ -5,6 +5,8 @@ using System.Reflection;
 using System.Collections.Generic;
 
 using WeaponSystem.Utility;
+using WeaponSystem.Interfaces.Logic;
+using WeaponSystem.Interfaces.Weapon;
 
 namespace WeaponSystem.Implementation
 {
