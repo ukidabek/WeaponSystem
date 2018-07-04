@@ -12,6 +12,9 @@ namespace WeaponSystem.Implementation.Animations
 
         public bool InState()
         {
+            if (animator == null)
+                return false;
+
             var stateInfo = animator.GetCurrentAnimatorStateInfo(layerIndex);
             int hash = Animator.StringToHash(stateName);
 
