@@ -23,7 +23,7 @@ namespace WeaponSystem
         {
             for (int i = 0; i < _defaultWeaponPrefabList.Count; i++)
             {
-                GameObject instance = GameObject.Instantiate(_defaultWeaponPrefabList[i], _weaponHolder.position, _weaponHolder.rotation, _weaponHolder);
+                GameObject instance = Instantiate(_defaultWeaponPrefabList[i], _weaponHolder.position, _weaponHolder.rotation, _weaponHolder);
                 IWeapon weapon = instance.GetComponent<IWeapon>();
                 _weaponSlots.Add(weapon);
                 weapon.GameObject.SetActive(false);
