@@ -109,7 +109,7 @@ namespace WeaponSystem.Utility
 
         public static void FillRequirements<T>(IWeapon weapon, object valueToSet = null) where T : InitializationAttribute
         {
-            var logicObjectsList = GetAllFieldsWithAttribute(weapon.GetType(), typeof(LogicObjectsAttribute));
+            var logicObjectsList = GetAllFieldsWithAttribute(weapon.GetType(), typeof(T));
             var list = logicObjectsList[0].GetValue(weapon) as IList;
 
             for (int i = 0; i < list.Count; i++)
